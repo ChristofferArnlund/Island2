@@ -1,1 +1,54 @@
 NOthing heeere
+
+Planen:
+Du har fått en liten plätt mark på 1200 - talet av din snälla kusin Dragan.
+Livet är svårt på den här tiden och du måste leva marken, och skaffa dig ett emperium.
+Bäst gör du detta genom att börja hugga ved, bygga nya byggnader med detta och expandera!
+May I wish you the best luck. 
+
+
+System:
+Start in 1200 work your way up to modern days.
+Different seasons
+1 turn 1 month
+
+
+Old era: (needs name)
+Prios:
+Building houses to live. (Need pop to work)
+Building woodcutters lodge 
+Building farms
+Building stone mines
+
+Resources:
+Basic:
+Gold
+Wood
+Stone
+Food
+
+Advanced:
+Iron
+Steel
+Coal
+
+misc:
+Research Points
+
+ResearchTree
+
+
+TimeHandling:
+12 months
+
+
+
+
+TASKS:
+1. Make a system that is capable of storing different values of different materials.
+2. A system that handels what kind of building are built
+   -> A common lib for all the different typs of buildings?
+    --> House, WoodCutterLodge, BasicFarm, StoneMine
+3.
+4.
+5.

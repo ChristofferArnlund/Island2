@@ -45,10 +45,25 @@ TimeHandling:
 
 
 TASKS:
-1. Make a system that is capable of storing different values of different materials.
-2. A system that handels what kind of building are built
-   -> A common lib for all the different typs of buildings?
-    --> House, WoodCutterLodge, BasicFarm, StoneMine
-3.
-4.
-5.
+1. Make a system that is capable of storing different values of different materials. OK 
+2. A system that handels what kind of building are built                             OK
+   -> A common lib for all the different typs of buildings?							 OK
+    --> House, WoodCutterLodge, BasicFarm, StoneMine								 BLOCKED
+3.Population
+		How it Works:
+			Every Building needs people to work in them
+				In the beginning only one people per building
+					if in building -> produce resource (check)
+		Type of Work 
+		Age Of Pop 
+		
+						
+4.Seasons
+		Temperature
+			Affects what?
+				Farms | 
+				
+5.Research
+
+6. Easy GUI
+		

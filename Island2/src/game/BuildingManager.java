@@ -59,11 +59,11 @@ public class BuildingManager {
 			// if buildingTime is zero then add to existingBuilding list and
 			// remove from Queue
 			// else decrease time with one turn.
-			if (building.buildingTime == 0) {
+			if (building.getBuildingTime() == 0) {
 				existingBuildings.add(building);
 				itr.remove();
 			} else {
-				building.buildingTime--;
+				building.setBuildingTime(building.getBuildingTime() - 1);
 			}
 		}
 	}

@@ -9,13 +9,19 @@ public class House extends Building{
 		goldCost=0;
 		woodCost = 0;
 		stoneCost =0;
-		buildingTime=1;
+		setBuildingTime(1);
 		generateGold=1;
 		generateWood=1;
 		generateStone=1;
 		
 	}
-	
+
+	@Override
+	public String costToString() {
+		return goldCost +" "+ woodCost +" "+ stoneCost;
+	}
+
+
 
 
 

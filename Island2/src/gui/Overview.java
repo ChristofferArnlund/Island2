@@ -52,6 +52,7 @@ public class Overview {
 	private JPanel buildingQueuePanel;
 	private JTable existingBuildingTable;
 	private JLabel turnsLabel;
+	private JTable peopleTable;
 
 	/**
 	 * Create the application.
@@ -116,7 +117,8 @@ public class Overview {
 				buildingQueuePanel);
 		frame.getContentPane().add(existingBuildingPanel);
 
-		JScrollPane peoplePanel = new JScrollPane();
+		JPanel peoplePanel = new JPanel();
+		peoplePanel.setLayout(new BorderLayout());
 		springLayout.putConstraint(SpringLayout.NORTH, peoplePanel, 6, SpringLayout.SOUTH, resourcesPanel);
 		springLayout.putConstraint(SpringLayout.WEST, peoplePanel, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, peoplePanel, 306, SpringLayout.SOUTH, resourcesPanel);
@@ -234,7 +236,18 @@ public class Overview {
 		JLabel PeopleLabel = new JLabel("People");
 		PeopleLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		PeopleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		peoplePanel.setColumnHeaderView(PeopleLabel);
+		peoplePanel.add(PeopleLabel,BorderLayout.NORTH);
+		
+		JScrollPane peopleScrollPane = new JScrollPane();
+		peoplePanel.add(peopleScrollPane, BorderLayout.CENTER);
+		
+		peopleTable = new JTable(new PeopleTable(buildingManager).generateTable());
+		peopleScrollPane.setViewportView(peopleTable);
+		
+		JPanel southPeoplePanel = new JPanel();
+		peoplePanel.add(southPeoplePanel, BorderLayout.SOUTH);
+		
+		
 
 	
 		 // EXISTING BUILDINGS
@@ -256,6 +269,15 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.NORTH, turnPanel, 6, SpringLayout.SOUTH, existingBuildingPanel);
 		springLayout.putConstraint(SpringLayout.WEST, turnPanel, 6, SpringLayout.EAST, existingTechPanel);
 		springLayout.putConstraint(SpringLayout.SOUTH, turnPanel, 306, SpringLayout.SOUTH, existingBuildingPanel);
+		
+		JPanel southExistingBuildingPanel = new JPanel();
+		existingBuildingPanel.add(southExistingBuildingPanel, BorderLayout.SOUTH);
+		
+		JButton assignPeopleButton = new JButton("Assign");
+		southExistingBuildingPanel.add(assignPeopleButton);
+		
+		JButton unAssingPeopleButton = new JButton("Unassign");
+		southExistingBuildingPanel.add(unAssingPeopleButton);
 		springLayout.putConstraint(SpringLayout.EAST, turnPanel, 206, SpringLayout.EAST, existingTechPanel);
 		frame.getContentPane().add(turnPanel);
 				turnPanel.setLayout(new BorderLayout(0, 0));

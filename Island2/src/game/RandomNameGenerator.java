@@ -23,9 +23,10 @@ public class RandomNameGenerator {
 		
 		names = new ArrayList<String>();
 		surnames = new ArrayList<String>();
+		parseNames();
 	}
 
-	public void parseNames() {
+	private void parseNames() {
 		Scanner scan;
 		try {
 			scan = new Scanner(nameFile);

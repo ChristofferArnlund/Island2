@@ -18,15 +18,16 @@ public class BuildingManager {
 	}
 
 	/**
-	 * Add to queue if there is enough resources
-	 * returns true if added to queue else false
+	 * Add to queue if there is enough resources returns true if added to queue
+	 * else false
+	 * 
 	 * @param building
 	 */
 	public boolean addToQueue(Building building) {
-		if(build(building)){
+		if (build(building)) {
 			buildingQueue.add(building);
 			return true;
-			
+
 		}
 		return false;
 	}
@@ -38,16 +39,20 @@ public class BuildingManager {
 
 	private void updateResources() {
 		for (Building b : existingBuildings) {
-			resourceManager.addResource("Gold", b.generateGold);
-			resourceManager.addResource("Wood", b.generateWood);
-			resourceManager.addResource("Stone", b.generateStone);
+			if (b.isFull()) {
+				double multiplier = Math.sqrt(b.actualNbrPersons() / b.getNbrPersons());
+				resourceManager.addResource("Gold", (int) Math.round(b.getGenerateGold() * multiplier));
+				resourceManager.addResource("Wood", (int) Math.round(b.getGenerateWood() * multiplier));
+				resourceManager.addResource("Stone", (int) Math.round(b.getGenerateStone() * multiplier));
+
+			}
+
 		}
 
 	}
 
 	public boolean build(Building building) {
-		return resourceManager.enoughResources(building.goldCost,
-				building.woodCost, building.woodCost);
+		return resourceManager.enoughResources(building.getGoldCost(), building.getWoodCost(), building.getWoodCost());
 	}
 
 	private void updateQueue() {

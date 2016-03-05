@@ -57,10 +57,15 @@ TASKS:
 			Every Building needs people to work in them
 				In the beginning only one people per building
 					if in building -> produce resource (check)
+					
+					
 		Type of Work 
 		Age Of Pop 
 		
-						
+					If more/less then needed:
+					sqrt(actual/needed)
+		
+					Max Limit in Building!
 4.Seasons
 		Temperature
 			Affects what?

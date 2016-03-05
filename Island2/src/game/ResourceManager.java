@@ -30,9 +30,8 @@ public class ResourceManager {
 	}
 
 	public void addResource(String resource, int amount) {
-		int temp=0;
-		temp= resources.get(resource);
-		resources.put("Gold", temp+amount);
+		int temp= resources.get(resource);
+		resources.put(resource, temp+amount);
 		
 	}
 

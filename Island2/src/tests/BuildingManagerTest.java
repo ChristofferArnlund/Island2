@@ -67,9 +67,19 @@ public class BuildingManagerTest {
 		turnHandler.newTurn();
 		assertEquals("Did not update Resource Gold","1",resourceManager.resources.get("Gold").toString());
 		
+	}
+	@Test
+	public void checkMultipleUpdateResources(){
+		buildingManager.addToQueue(new House());
+		buildingManager.addToQueue(new House());
+		buildingManager.addToQueue(new House());
+		//two turns to build.
+		turnHandler.newTurn();
+		turnHandler.newTurn();
 		
-		
-		
+		//new turn to update resources.
+		turnHandler.newTurn();
+		assertEquals("Did not update Resource Gold","3",resourceManager.resources.get("Gold").toString());
 		
 	}
 

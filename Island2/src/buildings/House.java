@@ -21,6 +21,11 @@ public class House extends Building{
 		return goldCost +" "+ woodCost +" "+ stoneCost;
 	}
 
+	@Override
+	public String genString() {
+		return generateGold +" "+generateWood+" "+generateStone ;
+	}
+
 
 
 

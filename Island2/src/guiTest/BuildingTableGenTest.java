@@ -25,7 +25,7 @@ public class BuildingTableGenTest {
 
 	@Test
 	public void checkifInputingCorrectly() {
-		JTable j = buildingTableGen.generateTable();
+		JTable j = new JTable(new BuildingTableGen().generateTable());
 		assertEquals("not inputing correctly","House",j.getValueAt(0, 0).toString());
 		assertEquals("not inputing correctly","0 0 0",j.getValueAt(0, 1).toString());
 		

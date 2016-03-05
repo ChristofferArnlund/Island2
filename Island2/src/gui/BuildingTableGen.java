@@ -1,7 +1,7 @@
 package gui;
 
 
-import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import buildings.Building;
 import buildings.House;
@@ -29,9 +29,9 @@ public class BuildingTableGen{
 
 		columnNames = new Object[] { "Building", "Cost" };
 	}
-	public JTable generateTable(){
+	public DefaultTableModel generateTable(){
 		loadTable();
-		return new JTable(rowData,columnNames);
+		return new DefaultTableModel(rowData,columnNames);
 		
 	}
 	

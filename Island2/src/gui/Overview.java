@@ -11,11 +11,20 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import buildings.Building;
+import buildings.House;
 import game.BuildingManager;
 import game.ResourceManager;
+import game.TurnHandler;
 
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.ScrollPaneConstants;
 import java.awt.FlowLayout;
 
@@ -30,7 +39,8 @@ public class Overview {
 				try {
 					ResourceManager resourceManager = new ResourceManager();
 					BuildingManager buildingManager = new BuildingManager(resourceManager);
-					Overview window = new Overview(resourceManager, buildingManager);
+					TurnHandler turnHandler = new TurnHandler(buildingManager,resourceManager);
+					Overview window = new Overview(resourceManager, buildingManager,turnHandler);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -41,22 +51,29 @@ public class Overview {
 
 	private JFrame frame;
 	private JTable buildingQueueTable;
-	private JTable table_1;
+	private JTable buildingTable;
+	private BuildingTableGen buldingTableGen;
+	private ResourceTableGen resourcesTableGen;
+	private JTable resourcesTable;
+	private JPanel buildingQueuePanel;
+	private JPanel buildingQueueBorderPanel;
+	private JTable existingBuildingTable;
 
 	/**
 	 * Create the application.
 	 * 
 	 * @param resourceManager
 	 */
-	public Overview(ResourceManager resourceManager,BuildingManager buildingManager) {
+	public Overview(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler) {
 
-		initialize(resourceManager,buildingManager);
+		initialize(resourceManager, buildingManager,turnHandler);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @param turnHandler 
 	 */
-	private void initialize(ResourceManager resourceManager, BuildingManager buildingManager) {
+	private void initialize(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 973, 722);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,7 +96,11 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.EAST, buildingListPanel, 206, SpringLayout.EAST, resourcesPanel);
 		frame.getContentPane().add(buildingListPanel);
 
-		JScrollPane buildingQueuePanel = new JScrollPane();
+		
+		 // BUILDING QUEUE
+		
+		buildingQueuePanel = new JPanel();
+		buildingQueuePanel.setLayout(new BorderLayout());
 		springLayout.putConstraint(SpringLayout.NORTH, buildingQueuePanel, 10, SpringLayout.NORTH,
 				frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, buildingQueuePanel, 6, SpringLayout.EAST, buildingListPanel);
@@ -88,7 +109,8 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.EAST, buildingQueuePanel, 206, SpringLayout.EAST, buildingListPanel);
 		frame.getContentPane().add(buildingQueuePanel);
 
-		JScrollPane existingBuildingPanel = new JScrollPane();
+		JPanel existingBuildingPanel = new JPanel();
+		existingBuildingPanel.setLayout(new BorderLayout());
 		springLayout.putConstraint(SpringLayout.NORTH, existingBuildingPanel, 10, SpringLayout.NORTH,
 				frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, existingBuildingPanel, 6, SpringLayout.EAST, buildingQueuePanel);
@@ -116,8 +138,7 @@ public class Overview {
 
 		// Loads from the resourcesclass in to the JTable
 
-		ResourceTableGen resourcesTableGen = new ResourceTableGen(resourceManager);
-		JTable resourcesTable = resourcesTableGen.generateTable();
+		resourcesTable = new JTable(new ResourceTableGen(resourceManager).generateTable());
 		bottomResourcePanel.add(resourcesTable);
 		resourcesTable.setEnabled(false);
 		resourcesTable.setRowSelectionAllowed(false);
@@ -132,6 +153,9 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.WEST, techPanel, 6, SpringLayout.EAST, peoplePanel);
 		springLayout.putConstraint(SpringLayout.SOUTH, techPanel, 306, SpringLayout.SOUTH, buildingListPanel);
 
+		
+		
+		// BUILDING LIST
 		JPanel panel = new JPanel();
 		buildingListPanel.setViewportView(panel);
 		panel.setLayout(new BorderLayout(0, 0));
@@ -142,7 +166,21 @@ public class Overview {
 		buildingListLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 		JButton buildButton = new JButton("Build");
+
 		panel.add(buildButton, BorderLayout.SOUTH);
+
+		buildButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				int index = buildingTable.getSelectedRow();
+				if (index == 0) {
+					
+					buildingManager.addToQueue(new House());
+					update(buildingManager, resourceManager);
+				}
+			}
+		});
 
 		JPanel middleBuildingPanel = new JPanel();
 		panel.add(middleBuildingPanel, BorderLayout.WEST);
@@ -153,8 +191,7 @@ public class Overview {
 		middleBuildingPanel.add(scrollPane, BorderLayout.CENTER);
 
 		// builds the buildingtable
-		BuildingTableGen buldingTableGen = new BuildingTableGen();
-		JTable buildingTable = buldingTableGen.generateTable();
+		buildingTable =new JTable(new BuildingTableGen().generateTable());
 		scrollPane.setViewportView(buildingTable);
 		// Sets so the table is not gigantic but fills the viewPort off the
 		// scrollpanel instead.
@@ -169,20 +206,25 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.WEST, existingTechPanel, 6, SpringLayout.EAST, techPanel);
 		springLayout.putConstraint(SpringLayout.SOUTH, existingTechPanel, 306, SpringLayout.SOUTH, buildingQueuePanel);
 
-		JPanel panel_1 = new JPanel();
-		buildingQueuePanel.setViewportView(panel_1);
-		panel_1.setLayout(new BorderLayout(0, 0));
-
+		// BUILDING QUEUE
+		
+		//LABEL NORTH
 		JLabel buildingQueueLabel = new JLabel("building Queue");
-		panel_1.add(buildingQueueLabel, BorderLayout.NORTH);
+		buildingQueuePanel.add(buildingQueueLabel, BorderLayout.NORTH);
 		buildingQueueLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		buildingQueueLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-		buildingQueueTable = new BuildingQueueTable(buildingManager).generateTable();
-		panel_1.add(buildingQueueTable, BorderLayout.CENTER);
-		springLayout.putConstraint(SpringLayout.EAST, existingTechPanel, 206, SpringLayout.EAST, techPanel);
+	
+		
+		// TABLE CENTER 
+		buildingQueueTable = new JTable(new BuildingQueueTable(buildingManager).generateTable());
+		
+		buildingQueuePanel.add(buildingQueueTable, BorderLayout.CENTER);
+		
+		
+		
 
 		JLabel techLabel = new JLabel("Technologies");
+		springLayout.putConstraint(SpringLayout.EAST, existingTechPanel, 206, SpringLayout.EAST, techPanel);
 		techLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		techLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		techPanel.setColumnHeaderView(techLabel);
@@ -194,6 +236,18 @@ public class Overview {
 		existingTechPanel.setColumnHeaderView(existingTechLabel);
 
 		JButton nextTurnButton = new JButton("Next Turn");
+		nextTurnButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				turnHandler.newTurn();
+				update(buildingManager,resourceManager);
+			
+			}
+
+		}
+
+		);
+
 		springLayout.putConstraint(SpringLayout.SOUTH, nextTurnButton, 0, SpringLayout.SOUTH, peoplePanel);
 
 		JLabel PeopleLabel = new JLabel("People");
@@ -202,16 +256,31 @@ public class Overview {
 		peoplePanel.setColumnHeaderView(PeopleLabel);
 		springLayout.putConstraint(SpringLayout.EAST, nextTurnButton, 0, SpringLayout.EAST, existingBuildingPanel);
 
-		JPanel panel_2 = new JPanel();
-		existingBuildingPanel.setViewportView(panel_2);
-		panel_2.setLayout(new BorderLayout(0, 0));
-
+	
+		 // EXISTING BUILDINGS
+		// LABEL
 		JLabel existingBuildingsLabel = new JLabel("Existing Buildings");
 		existingBuildingsLabel.setFont(new Font("Yu Gothic UI Light", Font.BOLD, 12));
 		existingBuildingsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_2.add(existingBuildingsLabel, BorderLayout.NORTH);
+		existingBuildingPanel.add(existingBuildingsLabel, BorderLayout.NORTH);
 		frame.getContentPane().add(nextTurnButton);
+		
+		//LIST
+		existingBuildingTable = new JTable(new ExistingBuildingModel(buildingManager).generateModel());
+		
+		existingBuildingPanel.add(existingBuildingTable, BorderLayout.CENTER);
+		
+		
+		
 
+	}
+	public void update(BuildingManager buildingManager,ResourceManager resourceManager){
+		buildingQueueTable.setModel(new BuildingQueueTable(buildingManager).generateTable());
+		buildingTable.setModel(new BuildingTableGen().generateTable());
+		resourcesTable.setModel(new ResourceTableGen(resourceManager).generateTable());
+		existingBuildingTable.setModel(new ExistingBuildingModel(buildingManager).generateModel());
+
+		
 	}
 
 }

@@ -15,6 +15,8 @@ public String toString() {
 	return name;
 }
 public abstract String costToString();
+public abstract String genString();
+
 public int getBuildingTime() {
 	return buildingTime;
 }

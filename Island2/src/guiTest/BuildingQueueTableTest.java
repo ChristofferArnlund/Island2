@@ -3,6 +3,7 @@ package guiTest;
 import static org.junit.Assert.*;
 
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,9 +34,10 @@ public class BuildingQueueTableTest {
 	@Test
 	public void test() {
 		b.addToQueue(new House());
-		JTable j = buildingQueueTable.generateTable();
+		DefaultTableModel d = buildingQueueTable.generateTable();
+		JTable t = new JTable(d);
 		
-		assertEquals("not inputing correctly","House",j.getValueAt(0, 0).toString());
+		assertEquals("not inputing correctly","House",t.getValueAt(0, 0).toString());
 
 	}
 

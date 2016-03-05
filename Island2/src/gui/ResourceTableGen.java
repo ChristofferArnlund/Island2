@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import game.ResourceManager;
 
@@ -38,9 +39,9 @@ public class ResourceTableGen{
 
 		columnNames = new Object[] { "Resource", "Value" };
 	}
-	public JTable generateTable(){
+	public DefaultTableModel generateTable(){
 		loadResources();
-		return new JTable(rowData,columnNames);
+		return new DefaultTableModel(rowData,columnNames);
 		
 	}
 	

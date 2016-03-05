@@ -12,11 +12,9 @@ import gui.BuildingTableGen;
 
 public class BuildingTableGenTest {
 
-	private BuildingTableGen buildingTableGen;
 
 	@Before
 	public void setUp() throws Exception {
-		buildingTableGen = new BuildingTableGen();
 	}
 
 	@After

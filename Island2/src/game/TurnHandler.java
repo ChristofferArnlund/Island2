@@ -9,15 +9,22 @@ public class TurnHandler {
 	public TurnHandler(BuildingManager buildingManager ,ResourceManager resourceManager) {
 		this.buildingManager = buildingManager;
 		this.resourceManager = resourceManager;
-		counter = 0;
+		setCounter(0);
 
 	}
 
 	public void newTurn() {
-		counter++;
-		
+		setCounter(getCounter() + 1);
 		buildingManager.newTurn();
 		resourceManager.newTurn();
 		
+	}
+
+	public int getCounter() {
+		return counter;
+	}
+
+	public void setCounter(int counter) {
+		this.counter = counter;
 	}
 }

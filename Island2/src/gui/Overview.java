@@ -11,19 +11,15 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import buildings.Building;
 import buildings.House;
 import game.BuildingManager;
 import game.ResourceManager;
 import game.TurnHandler;
 
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
 
 import javax.swing.ScrollPaneConstants;
 import java.awt.FlowLayout;
@@ -52,12 +48,10 @@ public class Overview {
 	private JFrame frame;
 	private JTable buildingQueueTable;
 	private JTable buildingTable;
-	private BuildingTableGen buldingTableGen;
-	private ResourceTableGen resourcesTableGen;
 	private JTable resourcesTable;
 	private JPanel buildingQueuePanel;
-	private JPanel buildingQueueBorderPanel;
 	private JTable existingBuildingTable;
+	private JLabel turnsLabel;
 
 	/**
 	 * Create the application.
@@ -177,7 +171,7 @@ public class Overview {
 				if (index == 0) {
 					
 					buildingManager.addToQueue(new House());
-					update(buildingManager, resourceManager);
+					update(buildingManager, resourceManager,turnHandler);
 				}
 			}
 		});
@@ -235,26 +229,10 @@ public class Overview {
 		existingTechLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		existingTechPanel.setColumnHeaderView(existingTechLabel);
 
-		JButton nextTurnButton = new JButton("Next Turn");
-		nextTurnButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				turnHandler.newTurn();
-				update(buildingManager,resourceManager);
-			
-			}
-
-		}
-
-		);
-
-		springLayout.putConstraint(SpringLayout.SOUTH, nextTurnButton, 0, SpringLayout.SOUTH, peoplePanel);
-
 		JLabel PeopleLabel = new JLabel("People");
 		PeopleLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		PeopleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		peoplePanel.setColumnHeaderView(PeopleLabel);
-		springLayout.putConstraint(SpringLayout.EAST, nextTurnButton, 0, SpringLayout.EAST, existingBuildingPanel);
 
 	
 		 // EXISTING BUILDINGS
@@ -263,24 +241,55 @@ public class Overview {
 		existingBuildingsLabel.setFont(new Font("Yu Gothic UI Light", Font.BOLD, 12));
 		existingBuildingsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		existingBuildingPanel.add(existingBuildingsLabel, BorderLayout.NORTH);
-		frame.getContentPane().add(nextTurnButton);
 		
 		//LIST
 		existingBuildingTable = new JTable(new ExistingBuildingModel(buildingManager).generateModel());
 		
 		existingBuildingPanel.add(existingBuildingTable, BorderLayout.CENTER);
 		
+		JPanel turnPanel = new JPanel();
+		springLayout.putConstraint(SpringLayout.NORTH, turnPanel, 6, SpringLayout.SOUTH, existingBuildingPanel);
+		springLayout.putConstraint(SpringLayout.WEST, turnPanel, 6, SpringLayout.EAST, existingTechPanel);
+		springLayout.putConstraint(SpringLayout.SOUTH, turnPanel, 306, SpringLayout.SOUTH, existingBuildingPanel);
+		springLayout.putConstraint(SpringLayout.EAST, turnPanel, 206, SpringLayout.EAST, existingTechPanel);
+		frame.getContentPane().add(turnPanel);
+				turnPanel.setLayout(new BorderLayout(0, 0));
+				
+				JPanel SouthTurnPanel = new JPanel();
+				turnPanel.add(SouthTurnPanel, BorderLayout.SOUTH);
+				SouthTurnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+						
+						turnsLabel = new JLabel("Turns: 0");
+						SouthTurnPanel.add(turnsLabel);
+				
+						JButton nextTurnButton = new JButton("Next Turn");
+						SouthTurnPanel.add(nextTurnButton);
+						nextTurnButton.setHorizontalAlignment(SwingConstants.TRAILING);
+						springLayout.putConstraint(SpringLayout.SOUTH, nextTurnButton, 0, SpringLayout.SOUTH, frame.getContentPane());
+						springLayout.putConstraint(SpringLayout.EAST, nextTurnButton, -436, SpringLayout.EAST, frame.getContentPane());
+				nextTurnButton.addActionListener(new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						turnHandler.newTurn();
+						update(buildingManager,resourceManager,turnHandler);
+					
+					}
+
+				}
+
+				);
+		
 		
 		
 
 	}
-	public void update(BuildingManager buildingManager,ResourceManager resourceManager){
+	public void update(BuildingManager buildingManager,ResourceManager resourceManager,TurnHandler turnHandler){
 		buildingQueueTable.setModel(new BuildingQueueTable(buildingManager).generateTable());
 		buildingTable.setModel(new BuildingTableGen().generateTable());
 		resourcesTable.setModel(new ResourceTableGen(resourceManager).generateTable());
 		existingBuildingTable.setModel(new ExistingBuildingModel(buildingManager).generateModel());
+		turnsLabel.setText("Turns: "+turnHandler.getCounter());
 
 		
 	}
-
 }

@@ -74,14 +74,16 @@ public class Overview {
 		SpringLayout springLayout = new SpringLayout();
 		frame.getContentPane().setLayout(springLayout);
 
-		JScrollPane resourcesPanel = new JScrollPane();
+		JPanel resourcesPanel = new JPanel();
+		resourcesPanel.setLayout(new BorderLayout());
 		springLayout.putConstraint(SpringLayout.NORTH, resourcesPanel, 10, SpringLayout.NORTH, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, resourcesPanel, 10, SpringLayout.WEST, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, resourcesPanel, 310, SpringLayout.NORTH, frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, resourcesPanel, 210, SpringLayout.WEST, frame.getContentPane());
 		frame.getContentPane().add(resourcesPanel);
 
-		JScrollPane buildingListPanel = new JScrollPane();
+		JPanel buildingListPanel = new JPanel();
+		buildingListPanel.setLayout(new BorderLayout());
 		springLayout.putConstraint(SpringLayout.NORTH, buildingListPanel, 10, SpringLayout.NORTH,
 				frame.getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, buildingListPanel, 6, SpringLayout.EAST, resourcesPanel);
@@ -120,20 +122,22 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.SOUTH, peoplePanel, 306, SpringLayout.SOUTH, resourcesPanel);
 
 		JPanel topResourcePanel = new JPanel();
-		resourcesPanel.setColumnHeaderView(topResourcePanel);
 
 		JLabel resourcesLabel = new JLabel("Resources");
-		topResourcePanel.add(resourcesLabel);
+		topResourcePanel.add(resourcesLabel, BorderLayout.CENTER);
 		resourcesLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 
-		JPanel bottomResourcePanel = new JPanel();
-		resourcesPanel.setViewportView(bottomResourcePanel);
-		bottomResourcePanel.setLayout(new BorderLayout(0, 0));
+		JScrollPane bottomResourcePanel = new JScrollPane();
+		resourcesPanel.add(bottomResourcePanel,BorderLayout.CENTER);
+		resourcesPanel.add(topResourcePanel,BorderLayout.NORTH);
 
-		// Loads from the resourcesclass in to the JTable
+		// RESOURCE TABLE
 
 		resourcesTable = new JTable(new ResourceTableGen(resourceManager).generateTable());
-		bottomResourcePanel.add(resourcesTable);
+		bottomResourcePanel.setViewportView(resourcesTable);
+		resourcesTable.setPreferredScrollableViewportSize(resourcesTable.getPreferredSize());
+		resourcesTable.setFillsViewportHeight(true);
+		
 		resourcesTable.setEnabled(false);
 		resourcesTable.setRowSelectionAllowed(false);
 		resourcesTable.setShowHorizontalLines(false);
@@ -150,18 +154,16 @@ public class Overview {
 		
 		
 		// BUILDING LIST
-		JPanel panel = new JPanel();
-		buildingListPanel.setViewportView(panel);
-		panel.setLayout(new BorderLayout(0, 0));
+
 
 		JLabel buildingListLabel = new JLabel("Buildings");
-		panel.add(buildingListLabel, BorderLayout.NORTH);
+		buildingListPanel.add(buildingListLabel, BorderLayout.NORTH);
 		buildingListLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		buildingListLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 		JButton buildButton = new JButton("Build");
 
-		panel.add(buildButton, BorderLayout.SOUTH);
+		buildingListPanel.add(buildButton, BorderLayout.SOUTH);
 
 		buildButton.addActionListener(new ActionListener() {
 
@@ -176,13 +178,10 @@ public class Overview {
 			}
 		});
 
-		JPanel middleBuildingPanel = new JPanel();
-		panel.add(middleBuildingPanel, BorderLayout.WEST);
-		middleBuildingPanel.setLayout(new BorderLayout(0, 0));
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-		middleBuildingPanel.add(scrollPane, BorderLayout.CENTER);
+		buildingListPanel.add(scrollPane, BorderLayout.CENTER);
 
 		// builds the buildingtable
 		buildingTable =new JTable(new BuildingTableGen().generateTable());
@@ -203,7 +202,7 @@ public class Overview {
 		// BUILDING QUEUE
 		
 		//LABEL NORTH
-		JLabel buildingQueueLabel = new JLabel("building Queue");
+		JLabel buildingQueueLabel = new JLabel("Building Queue");
 		buildingQueuePanel.add(buildingQueueLabel, BorderLayout.NORTH);
 		buildingQueueLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		buildingQueueLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -211,8 +210,11 @@ public class Overview {
 		
 		// TABLE CENTER 
 		buildingQueueTable = new JTable(new BuildingQueueTable(buildingManager).generateTable());
+		buildingQueueTable.setFillsViewportHeight(true);
 		
-		buildingQueuePanel.add(buildingQueueTable, BorderLayout.CENTER);
+		JScrollPane buildingQueueScroll = new JScrollPane();
+		buildingQueueScroll.setViewportView(buildingQueueTable);
+		buildingQueuePanel.add(buildingQueueScroll, BorderLayout.CENTER);
 		
 		
 		
@@ -244,8 +246,11 @@ public class Overview {
 		
 		//LIST
 		existingBuildingTable = new JTable(new ExistingBuildingModel(buildingManager).generateModel());
+		existingBuildingTable.setFillsViewportHeight(true);
 		
-		existingBuildingPanel.add(existingBuildingTable, BorderLayout.CENTER);
+		JScrollPane existingBuildingScroll = new JScrollPane();
+		existingBuildingScroll.setViewportView(existingBuildingTable);
+		existingBuildingPanel.add(existingBuildingScroll, BorderLayout.CENTER);
 		
 		JPanel turnPanel = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, turnPanel, 6, SpringLayout.SOUTH, existingBuildingPanel);

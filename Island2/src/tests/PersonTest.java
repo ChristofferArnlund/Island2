@@ -10,9 +10,12 @@ import buildings.Building;
 import buildings.House;
 import game.BuildingManager;
 import game.Person;
+import game.PersonGenerator;
+import game.PersonHandler;
 import game.RandomNameGenerator;
 import game.ResourceManager;
 import game.TurnHandler;
+import game.UpdateResources;
 
 public class PersonTest {
 
@@ -20,15 +23,20 @@ public class PersonTest {
 	private ResourceManager rm;
 	private BuildingManager bm;
 	private TurnHandler turnHandler;
-
+	private PersonHandler ph;
+	private RandomNameGenerator rand;
+	private PersonGenerator pg;
+	
 	@Before
 	public void setUp() throws Exception {
-		RandomNameGenerator rand = new RandomNameGenerator();
+		rand = new RandomNameGenerator();
+		ph = new PersonHandler();
 		rm = new ResourceManager();
 		bm = new BuildingManager(rm);
-		person = new Person(rand);
-		 turnHandler = new TurnHandler(bm,rm);
-
+		person = new Person("Pelle");
+		pg = new PersonGenerator(bm, ph);
+		UpdateResources updateResources = new UpdateResources();
+		turnHandler = new TurnHandler(bm, rm, pg, updateResources);
 	}
 
 	@After
@@ -37,6 +45,7 @@ public class PersonTest {
 		bm= null;
 		person= null;
 		turnHandler = null;
+		ph=null;
 	}
 
 	@Test
@@ -49,7 +58,7 @@ public class PersonTest {
 		bm.existingBuildings.add(new House());
 		Building h = (Building) bm.existingBuildings.get(0);
 		if (!h.isFull()) {
-			h.addPerson(person);
+			h.assignPerson(person);
 		}
 		assertTrue("Did not input peoplseto house", h.isFull());
 	}
@@ -74,10 +83,12 @@ public class PersonTest {
 	}
 	
 	@Test
-	public void ifPersonNInHouseProduceResources() {
+	public void ifPersonInHouseProduceResources() {
 		bm.existingBuildings.add(new House());
-		Building h = (Building) bm.existingBuildings.get(0);
-		h.addPerson(person);
+		Building house = (Building) bm.existingBuildings.get(0);
+		ph.addUnassigned(person);
+		ph.assign(ph.getUnassigned(0), house);
+		
 		turnHandler.newTurn();
 		assertEquals("did not produce",1, rm.resources.get("Gold").intValue());
 	}
@@ -85,18 +96,97 @@ public class PersonTest {
 	public void ifSeveralPersonNInHouseProduceResources() {
 		bm.existingBuildings.add(new House());
 		Building h = (Building) bm.existingBuildings.get(0);
-		h.addPerson(person);
-		h.addPerson(person);
-		h.addPerson(person);
-		h.addPerson(person);
-		h.addPerson(person);
+		h.assignPerson(person);
+		h.assignPerson(person);
+		h.assignPerson(person);
+		h.assignPerson(person);
+		h.assignPerson(person);
 		
 		turnHandler.newTurn();
 		//sqrt(5/1)*1 = 2.2 ~2 
 		assertEquals("did not produce",2, rm.resources.get("Gold").intValue());
 	}
 	
+	@Test
+	public void addToPersonHandlerList() {
+	//if not assigned person should be in unassignedPeopleList.
+		
+		Person per = new Person("Per");
+		
+		ph.addUnassigned(per);
+		assertEquals("did not insert","Per",ph.getUnassigned(0).getName());
+		
+	}
+	@Test
+	public void assignPersonAndCheckLists() {
+		bm.existingBuildings.add(new House());
+		Building h = (Building) bm.existingBuildings.get(0);
+		ph.addUnassigned(person);
+		ph.assign(ph.getUnassigned(0), h);
+		assertEquals("did not put in building",1,h.actualNbrPersons());
+		assertTrue("Did no remove person",ph.unassignedIsEmpty());
+		assertEquals("dit not iterate and input correctly","Pelle",ph.getAssigned(0).getName());
+	}
+	@Test
+	public void UnassignPersonAndCheckLists() {
+		bm.existingBuildings.add(new House());
+		Building h = (Building) bm.existingBuildings.get(0);
+		ph.addUnassigned(person);
+		ph.assign(ph.getUnassigned(0), h);
+		ph.unassign(ph.getAssigned(0));
+		assertEquals("dit not iterate and input correctly","Pelle",ph.getUnassigned(0).getName());
+		assertTrue("Did no remove person",ph.assignedIsEmpty());
+		assertEquals("did not put in building",0,h.actualNbrPersons());
 	
+	
+	}
+	@Test
+	public void multipleAssignUnassign() {
+		bm.existingBuildings.add(new House());
+		bm.existingBuildings.add(new House());
+		bm.existingBuildings.add(new House());
+		bm.existingBuildings.add(new House());
+		
+		Building h1 = (Building) bm.existingBuildings.get(0);
+		Building h2= (Building) bm.existingBuildings.get(1);
+		Building h3 = (Building) bm.existingBuildings.get(2);
+		Building h4 = (Building) bm.existingBuildings.get(3);
+	
+		ph.addUnassigned(new Person("p1"));
+		ph.addUnassigned(new Person("p2"));
+		ph.addUnassigned(new Person("p3"));
+		ph.addUnassigned(new Person("p4"));
+	
+		ph.assign(ph.getUnassigned(0), h1);
+		assertEquals("did not put in building",1,h1.actualNbrPersons());
+
+		ph.assign(ph.getUnassigned(0), h2);
+		assertEquals("did not put in building",1,h2.actualNbrPersons());
+
+		ph.assign(ph.getUnassigned(0), h3);
+		assertEquals("did not put in building",1,h3.actualNbrPersons());
+
+		ph.assign(ph.getUnassigned(0), h4);
+		assertEquals("did not put in building",1,h4.actualNbrPersons());
+	
+		ph.unassign(ph.getAssigned(0));;
+		assertEquals("did not put in building",0,h1.actualNbrPersons());
+		
+		ph.unassign(ph.getAssigned(0));;
+		assertEquals("did not put in building",0,h2.actualNbrPersons());
+		
+		assertEquals("did not put in building",1,h3.actualNbrPersons());
+		assertEquals("did not put in building",1,h4.actualNbrPersons());
+		
+		ph.assign(ph.getUnassigned(0), h3);
+		ph.assign(ph.getUnassigned(0), h3);
+		assertEquals("did not put in building",3,h3.actualNbrPersons());
+
+	}
+	@Test
+	public void test() {
+		//fail("Not yet implemented");
+	}
 	
 	
 	

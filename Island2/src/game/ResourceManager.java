@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class ResourceManager {
 	public HashMap<String, Integer> resources;
+	private UpdateResources ur;
 
 	public ResourceManager() {
 
@@ -12,7 +13,7 @@ public class ResourceManager {
 		resources.put("Wood", 0);
 		resources.put("Stone", 0);
 		resources.put("Food", 0);
-		resources.put("Research", 0);
+		//resources.put("Research", 0);
 
 	}
 
@@ -24,18 +25,13 @@ public class ResourceManager {
 			return false;
 	}
 
-	public  void newTurn() {
-	
-		
-	}
+
 
 	public void addResource(String resource, int amount) {
 		int temp= resources.get(resource);
 		resources.put(resource, temp+amount);
 		
 	}
-
-
 	}
 
 

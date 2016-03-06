@@ -46,7 +46,7 @@ public abstract class Building {
 		return personList.size();
 	}
 
-	public boolean addPerson(Person person) {
+	public boolean assignPerson(Person person) {
 		if (actualNbrPersons() < getMaxNbrPersons()) {
 			personList.add(person);
 			return true;
@@ -126,6 +126,10 @@ public abstract class Building {
 
 	public void setMaxNbrPersons(int maxNbrPersons) {
 		this.maxNbrPersons = maxNbrPersons;
+	}
+
+	public void unassign(Person assigned) {
+		personList.remove(assigned);
 	}
 
 }

@@ -1,16 +1,26 @@
 package game;
 
-public class Person {
-	private RandomNameGenerator randomName;
-	private String name;
+import buildings.Building;
 
-	public Person(RandomNameGenerator randomName){
-		this.randomName = randomName;
-		name = randomName.generateRandomName();
+public class Person {
+
+	private String name;
+	private Building building;
+
+	public Person(String name){
+		this.name = name;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public Building getBuilding() {
+		return building;
+	}
+
+	public void setBuilding(Building building) {
+		this.building = building;
 	}
 
 }

@@ -33,22 +33,8 @@ public class BuildingManager {
 	}
 
 	public void newTurn() {
-		updateResources();
 		updateQueue();
-	}
-
-	private void updateResources() {
-		for (Building b : existingBuildings) {
-			if (b.isFull()) {
-				double multiplier = Math.sqrt(b.actualNbrPersons() / b.getNbrPersons());
-				resourceManager.addResource("Gold", (int) Math.round(b.getGenerateGold() * multiplier));
-				resourceManager.addResource("Wood", (int) Math.round(b.getGenerateWood() * multiplier));
-				resourceManager.addResource("Stone", (int) Math.round(b.getGenerateStone() * multiplier));
-
-			}
-
-		}
-
+		
 	}
 
 	public boolean build(Building building) {

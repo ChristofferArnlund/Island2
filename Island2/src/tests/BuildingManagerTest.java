@@ -3,9 +3,12 @@ package tests;
 import static org.junit.Assert.*;
 import game.BuildingManager;
 import game.Person;
+import game.PersonGenerator;
+import game.PersonHandler;
 import game.RandomNameGenerator;
 import game.ResourceManager;
 import game.TurnHandler;
+import game.UpdateResources;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,7 +28,9 @@ public class BuildingManagerTest {
 	public void setUp() throws Exception {
 		resourceManager = new ResourceManager();
 		buildingManager = new BuildingManager(resourceManager);
-		turnHandler = new TurnHandler(buildingManager, resourceManager);
+		PersonGenerator pg = new PersonGenerator(buildingManager, new PersonHandler());
+		UpdateResources updateResources = new UpdateResources();
+		turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources);
 		rand = new RandomNameGenerator();
 		
 	}
@@ -64,7 +69,7 @@ public class BuildingManagerTest {
 	@Test
 	public void checkUpdateResources(){
 		House h = new House();
-		h.addPerson(new Person(rand));
+		h.assignPerson(new Person(rand.generateRandomName()));
 		buildingManager.addToQueue(h);
 		//two turns to build.
 		turnHandler.newTurn();
@@ -80,9 +85,9 @@ public class BuildingManagerTest {
 		House h1 = new House();
 		House h2 = new House();
 		House h3 = new House();
-		h1.addPerson(new Person(rand));
-		h2.addPerson(new Person(rand));
-		h3.addPerson(new Person(rand));
+		h1.assignPerson(new Person(rand.generateRandomName()));
+		h2.assignPerson(new Person(rand.generateRandomName()));
+		h3.assignPerson(new Person(rand.generateRandomName()));
 		buildingManager.addToQueue(h1);
 		buildingManager.addToQueue(h2);
 		buildingManager.addToQueue(h3);

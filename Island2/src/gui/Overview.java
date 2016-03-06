@@ -13,8 +13,12 @@ import javax.swing.SwingConstants;
 
 import buildings.House;
 import game.BuildingManager;
+import game.Person;
+import game.PersonGenerator;
+import game.PersonHandler;
 import game.ResourceManager;
 import game.TurnHandler;
+import game.UpdateResources;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -35,8 +39,11 @@ public class Overview {
 				try {
 					ResourceManager resourceManager = new ResourceManager();
 					BuildingManager buildingManager = new BuildingManager(resourceManager);
-					TurnHandler turnHandler = new TurnHandler(buildingManager,resourceManager);
-					Overview window = new Overview(resourceManager, buildingManager,turnHandler);
+					PersonHandler personHandler = new PersonHandler();
+					PersonGenerator pg = new PersonGenerator(buildingManager, personHandler);
+					UpdateResources updateResources = new UpdateResources();
+					TurnHandler turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources);					
+					Overview window = new Overview(resourceManager, buildingManager, turnHandler,personHandler,updateResources);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,24 +60,30 @@ public class Overview {
 	private JTable existingBuildingTable;
 	private JLabel turnsLabel;
 	private JTable peopleTable;
+	private int index;
 
 	/**
 	 * Create the application.
 	 * 
 	 * @param resourceManager
+	 * @param personHandler 
+	 * @param updateResources 
 	 */
-	public Overview(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler) {
+	public Overview(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler, PersonHandler personHandler, UpdateResources updateResources) {
 
-		initialize(resourceManager, buildingManager,turnHandler);
+		initialize(resourceManager, buildingManager, turnHandler,personHandler,updateResources);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
-	 * @param turnHandler 
+	 * 
+	 * @param turnHandler
+	 * @param personHandler 
+	 * @param updateResources 
 	 */
-	private void initialize(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler) {
+	private void initialize(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler, PersonHandler personHandler, UpdateResources updateResources) {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 973, 722);
+		frame.setBounds(100, 100, 1280, 720);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SpringLayout springLayout = new SpringLayout();
 		frame.getContentPane().setLayout(springLayout);
@@ -93,9 +106,8 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.EAST, buildingListPanel, 206, SpringLayout.EAST, resourcesPanel);
 		frame.getContentPane().add(buildingListPanel);
 
-		
-		 // BUILDING QUEUE
-		
+		// BUILDING QUEUE
+
 		buildingQueuePanel = new JPanel();
 		buildingQueuePanel.setLayout(new BorderLayout());
 		springLayout.putConstraint(SpringLayout.NORTH, buildingQueuePanel, 10, SpringLayout.NORTH,
@@ -130,16 +142,16 @@ public class Overview {
 		resourcesLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 
 		JScrollPane bottomResourcePanel = new JScrollPane();
-		resourcesPanel.add(bottomResourcePanel,BorderLayout.CENTER);
-		resourcesPanel.add(topResourcePanel,BorderLayout.NORTH);
+		resourcesPanel.add(bottomResourcePanel, BorderLayout.CENTER);
+		resourcesPanel.add(topResourcePanel, BorderLayout.NORTH);
 
 		// RESOURCE TABLE
 
-		resourcesTable = new JTable(new ResourceTableGen(resourceManager).generateTable());
+		resourcesTable = new JTable(new ResourceTableGen(resourceManager,updateResources).generateTable());
 		bottomResourcePanel.setViewportView(resourcesTable);
 		resourcesTable.setPreferredScrollableViewportSize(resourcesTable.getPreferredSize());
 		resourcesTable.setFillsViewportHeight(true);
-		
+
 		resourcesTable.setEnabled(false);
 		resourcesTable.setRowSelectionAllowed(false);
 		resourcesTable.setShowHorizontalLines(false);
@@ -153,10 +165,7 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.WEST, techPanel, 6, SpringLayout.EAST, peoplePanel);
 		springLayout.putConstraint(SpringLayout.SOUTH, techPanel, 306, SpringLayout.SOUTH, buildingListPanel);
 
-		
-		
 		// BUILDING LIST
-
 
 		JLabel buildingListLabel = new JLabel("Buildings");
 		buildingListPanel.add(buildingListLabel, BorderLayout.NORTH);
@@ -166,27 +175,26 @@ public class Overview {
 		JButton buildButton = new JButton("Build");
 
 		buildingListPanel.add(buildButton, BorderLayout.SOUTH);
-
 		buildButton.addActionListener(new ActionListener() {
+
+			
 
 			public void actionPerformed(ActionEvent e) {
 
-				int index = buildingTable.getSelectedRow();
-				if (index == 0) {
-					
+			index = buildingTable.getSelectedRow();
+				if (index == 0 || index ==-1) {
 					buildingManager.addToQueue(new House());
-					update(buildingManager, resourceManager,turnHandler);
+					update(buildingManager, resourceManager, turnHandler,personHandler,updateResources);
 				}
 			}
 		});
-
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		buildingListPanel.add(scrollPane, BorderLayout.CENTER);
 
 		// builds the buildingtable
-		buildingTable =new JTable(new BuildingTableGen().generateTable());
+		buildingTable = new JTable(new BuildingTableGen().generateTable());
 		scrollPane.setViewportView(buildingTable);
 		// Sets so the table is not gigantic but fills the viewPort off the
 		// scrollpanel instead.
@@ -202,24 +210,20 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.SOUTH, existingTechPanel, 306, SpringLayout.SOUTH, buildingQueuePanel);
 
 		// BUILDING QUEUE
-		
-		//LABEL NORTH
+
+		// LABEL NORTH
 		JLabel buildingQueueLabel = new JLabel("Building Queue");
 		buildingQueuePanel.add(buildingQueueLabel, BorderLayout.NORTH);
 		buildingQueueLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		buildingQueueLabel.setHorizontalAlignment(SwingConstants.CENTER);
-	
-		
-		// TABLE CENTER 
+
+		// TABLE CENTER
 		buildingQueueTable = new JTable(new BuildingQueueTable(buildingManager).generateTable());
 		buildingQueueTable.setFillsViewportHeight(true);
-		
+
 		JScrollPane buildingQueueScroll = new JScrollPane();
 		buildingQueueScroll.setViewportView(buildingQueueTable);
 		buildingQueuePanel.add(buildingQueueScroll, BorderLayout.CENTER);
-		
-		
-		
 
 		JLabel techLabel = new JLabel("Technologies");
 		springLayout.putConstraint(SpringLayout.EAST, existingTechPanel, 206, SpringLayout.EAST, techPanel);
@@ -233,90 +237,119 @@ public class Overview {
 		existingTechLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		existingTechPanel.setColumnHeaderView(existingTechLabel);
 
+		// PEOPLE PANEL
 		JLabel PeopleLabel = new JLabel("People");
 		PeopleLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		PeopleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		peoplePanel.add(PeopleLabel,BorderLayout.NORTH);
-		
+		peoplePanel.add(PeopleLabel, BorderLayout.NORTH);
+
 		JScrollPane peopleScrollPane = new JScrollPane();
 		peoplePanel.add(peopleScrollPane, BorderLayout.CENTER);
-		
-		peopleTable = new JTable(new PeopleTable(buildingManager).generateTable());
+
+		// PEOPLE TABLE
+		personHandler.addUnassigned(new Person("YO"));
+		peopleTable = new JTable(new PeopleTable(personHandler).generateTable());
 		peopleScrollPane.setViewportView(peopleTable);
-		
+
 		JPanel southPeoplePanel = new JPanel();
 		peoplePanel.add(southPeoplePanel, BorderLayout.SOUTH);
-		
-		
 
-	
-		 // EXISTING BUILDINGS
+		// EXISTING BUILDINGS
 		// LABEL
 		JLabel existingBuildingsLabel = new JLabel("Existing Buildings");
 		existingBuildingsLabel.setFont(new Font("Yu Gothic UI Light", Font.BOLD, 12));
 		existingBuildingsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		existingBuildingPanel.add(existingBuildingsLabel, BorderLayout.NORTH);
-		
-		//LIST
+
+		// LIST
 		existingBuildingTable = new JTable(new ExistingBuildingModel(buildingManager).generateModel());
 		existingBuildingTable.setFillsViewportHeight(true);
-		
+
 		JScrollPane existingBuildingScroll = new JScrollPane();
 		existingBuildingScroll.setViewportView(existingBuildingTable);
 		existingBuildingPanel.add(existingBuildingScroll, BorderLayout.CENTER);
-		
+
 		JPanel turnPanel = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, turnPanel, 6, SpringLayout.SOUTH, existingBuildingPanel);
 		springLayout.putConstraint(SpringLayout.WEST, turnPanel, 6, SpringLayout.EAST, existingTechPanel);
 		springLayout.putConstraint(SpringLayout.SOUTH, turnPanel, 306, SpringLayout.SOUTH, existingBuildingPanel);
-		
+
 		JPanel southExistingBuildingPanel = new JPanel();
 		existingBuildingPanel.add(southExistingBuildingPanel, BorderLayout.SOUTH);
-		
+
+		// ASSIGN PEOPLE BUTTON
 		JButton assignPeopleButton = new JButton("Assign");
+		assignPeopleButton
+				.setToolTipText("Please mark both the existing building and the person you want to assign/unassign");
+		assignPeopleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int eIndex = existingBuildingTable.getSelectedRow();
+				int pIndex = peopleTable.getSelectedRow();
+				if(pIndex!=-1){
+					personHandler.assign(personHandler.getUnassigned(pIndex),
+							buildingManager.existingBuildings.get(eIndex));
+					
+				}
+				update(buildingManager, resourceManager, turnHandler,personHandler,updateResources);
+
+			}
+		});
 		southExistingBuildingPanel.add(assignPeopleButton);
-		
+
 		JButton unAssingPeopleButton = new JButton("Unassign");
+		unAssingPeopleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int pIndex = peopleTable.getSelectedRow();
+				if(pIndex != -1){
+						personHandler.unassign(personHandler.getAssigned(pIndex));
+						
+					
+				}
+
+				update(buildingManager, resourceManager, turnHandler,personHandler,updateResources);
+
+			}
+		});
 		southExistingBuildingPanel.add(unAssingPeopleButton);
 		springLayout.putConstraint(SpringLayout.EAST, turnPanel, 206, SpringLayout.EAST, existingTechPanel);
 		frame.getContentPane().add(turnPanel);
-				turnPanel.setLayout(new BorderLayout(0, 0));
-				
-				JPanel SouthTurnPanel = new JPanel();
-				turnPanel.add(SouthTurnPanel, BorderLayout.SOUTH);
-				SouthTurnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-						
-						turnsLabel = new JLabel("Turns: 0");
-						SouthTurnPanel.add(turnsLabel);
-				
-						JButton nextTurnButton = new JButton("Next Turn");
-						SouthTurnPanel.add(nextTurnButton);
-						nextTurnButton.setHorizontalAlignment(SwingConstants.TRAILING);
-						springLayout.putConstraint(SpringLayout.SOUTH, nextTurnButton, 0, SpringLayout.SOUTH, frame.getContentPane());
-						springLayout.putConstraint(SpringLayout.EAST, nextTurnButton, -436, SpringLayout.EAST, frame.getContentPane());
-				nextTurnButton.addActionListener(new ActionListener() {
+		turnPanel.setLayout(new BorderLayout(0, 0));
 
-					public void actionPerformed(ActionEvent e) {
-						turnHandler.newTurn();
-						update(buildingManager,resourceManager,turnHandler);
-					
-					}
+		JPanel SouthTurnPanel = new JPanel();
+		turnPanel.add(SouthTurnPanel, BorderLayout.SOUTH);
+		SouthTurnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-				}
+		turnsLabel = new JLabel("Turns: 0");
+		SouthTurnPanel.add(turnsLabel);
 
-				);
-		
-		
-		
+		JButton nextTurnButton = new JButton("Next Turn");
+		SouthTurnPanel.add(nextTurnButton);
+		nextTurnButton.setHorizontalAlignment(SwingConstants.TRAILING);
+		springLayout.putConstraint(SpringLayout.SOUTH, nextTurnButton, 0, SpringLayout.SOUTH, frame.getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, nextTurnButton, -436, SpringLayout.EAST, frame.getContentPane());
+		nextTurnButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				turnHandler.newTurn();
+				update(buildingManager, resourceManager, turnHandler,personHandler,updateResources);
+
+			}
+
+		}
+
+		);
 
 	}
-	public void update(BuildingManager buildingManager,ResourceManager resourceManager,TurnHandler turnHandler){
+
+	public void update(BuildingManager buildingManager, ResourceManager resourceManager, TurnHandler turnHandler,PersonHandler personHandler,UpdateResources updateResources) {
 		buildingQueueTable.setModel(new BuildingQueueTable(buildingManager).generateTable());
 		buildingTable.setModel(new BuildingTableGen().generateTable());
-		resourcesTable.setModel(new ResourceTableGen(resourceManager).generateTable());
+		resourcesTable.setModel(new ResourceTableGen(resourceManager,updateResources).generateTable());
 		existingBuildingTable.setModel(new ExistingBuildingModel(buildingManager).generateModel());
-		turnsLabel.setText("Turns: "+turnHandler.getCounter());
+		turnsLabel.setText("Turns: " + turnHandler.getCounter());
+		peopleTable.setModel(new PeopleTable(personHandler).generateTable());
 
-		
 	}
 }

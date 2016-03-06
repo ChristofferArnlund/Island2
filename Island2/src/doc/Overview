@@ -62,10 +62,23 @@ TASKS:
 		Type of Work 
 		Age Of Pop 
 		
-					If more/less then needed:
+					If more/less then needed:										OK
 					sqrt(actual/needed)
 		
-					Max Limit in Building!
+					Max Limit in Building!											OK
+		Gui implementation: Show all the pop
+							show all the free pop
+							show all the busy pop
+							the busy pop has connection to
+							the building. 
+							How? List with unassigned people
+							remove from this list when assigned
+							when unassigning, remove from list
+							remove building
+							add to unassigned list.
+							
+			
+
 4.Seasons
 		Temperature
 			Affects what?
@@ -74,8 +87,12 @@ TASKS:
 5.Research
 
 6. Easy GUI for basic functions
-				Worked a lot on the gui and the first end to end
-				is kinda of done
+				
+				
+				
 		
 7. Test
-		Progress is slow
+		Progress is ok
+		
+8. AI for letting new people join the island
+		check if people are empty, if they are and 

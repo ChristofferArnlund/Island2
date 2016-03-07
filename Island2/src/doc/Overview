@@ -1,12 +1,28 @@
 NOthing heeere
 
 Planen:
-Du har fått en liten plätt mark på 1200 - talet av din snälla kusin Dragan.
+Du har fått en liten ö på 1200 - talet av din snälla kusin Dragan.
 Livet är svårt på den här tiden och du måste leva marken, och skaffa dig ett emperium.
 Bäst gör du detta genom att börja hugga ved, bygga nya byggnader med detta och expandera!
 May I wish you the best luck. 
 
-Lets Palaying:
+För att öka tempo:
+Dragan är dock inte så snäll, för din lilla plätt mark kommer han varje 10:nde tur
+att ta en avgift och det gäller att du kan betala den annars kommer han ta tillbaka sin plätt
+
+Efter en period när du har tillräckligt med pengar kan du köpa plätten av din kusin.
+
+Du kommer även få möjlighet att köpa nya öar, då din nuvarande ö inte räcker till
+Expandera först till en till, starta upp verksamheten där
+
+FIENDER:
+Det kommer finnas fiender som dyker upp lite random och försöker plundra din ö.
+Det gäller att du har tillräckligt med försvar för att stå emot detta, annars kommer dom
+förstöra byggnader och ta av dina resurser. 
+
+
+
+Lets Playing:
 It starts in the good old days but transforms into this steampunk future with a lot of
 whacko techs and designs. 
 
@@ -39,11 +55,25 @@ misc:
 Research Points
 
 ResearchTree
+Målet är att börja litet sedan ha coola stora teknologier, steampunk...
+
+Första 3 teknologierna:
+
+Bronze age: 
+
+Agriculturing - Tillåter spelaren att skapa farmer som producerar ... mat så att befolkningen kan växa 
+Animal Taming - Finally we can move this huge trees more effeicient, make   
+Furnaces - Smelting stone, we can finally make iron!
+
+
 
 
 TimeHandling:
 12 months
 
+FOOD:
+food is needed to make the population of the island grow
+1 farm allows for X people to be fed.
 
 
 
@@ -63,7 +93,7 @@ TASKS:
 		Age Of Pop 
 		
 					If more/less then needed:										OK
-					sqrt(actual/needed)
+					sqrt(actual/needed)*gen
 		
 					Max Limit in Building!											OK
 		Gui implementation: Show all the pop
@@ -87,12 +117,16 @@ TASKS:
 5.Research
 
 6. Easy GUI for basic functions
-				
+				basic functions														OK
+				make new dragable panels											??
+				Make icons for the panels.
+				Get cool background picture of island.								??
 				
 				
 		
 7. Test
 		Progress is ok
 		
-8. AI for letting new people join the island
+8. AI for letting new people join the island										OK
 		check if people are empty, if they are and 
+		and check if enough food is there 											??

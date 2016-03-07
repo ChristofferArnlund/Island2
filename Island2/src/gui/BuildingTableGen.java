@@ -3,8 +3,8 @@ package gui;
 
 import javax.swing.table.DefaultTableModel;
 
+import buildings.AllBuildingsList;
 import buildings.Building;
-import buildings.House;
 
 public class BuildingTableGen{
 
@@ -16,14 +16,14 @@ public class BuildingTableGen{
 	}
 	
 	private void loadTable() {
-		Building[] buildingName = new Building[1];
-		buildingName[0]= new House();
+		AllBuildingsList allbuildingsList = new AllBuildingsList();
+		Object[] buildings = allbuildingsList.getAllBuildings().toArray();
 		//has to be +1 otherwise it may overflow
-			rowData = new Object[buildingName.length][buildingName.length+1];
+			rowData = new Object[buildings.length][buildings.length+1];
 			//Inputs correctly to Table.
-			for (int x = 0; x < buildingName.length ; x++) {
-				rowData[x][0] = buildingName[x].toString();
-				rowData[x][1] = buildingName[x].costToString();
+			for (int x = 0; x < buildings.length ; x++) {
+				rowData[x][0] = buildings[x].toString();
+				rowData[x][1] = ((Building) buildings[x]).costToString();
 			
 		}
 

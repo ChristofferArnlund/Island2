@@ -17,15 +17,5 @@ public class House extends Building {
 		setMaxNbrPersons(10);
 	}
 
-	@Override
-	public String costToString() {
-		return getGoldCost() + " " + getWoodCost() + " " + getStoneCost();
-	}
-
-	@Override
-	public String genString() {
-		return getGenerateGold() + " " + getGenerateWood() + " " + getGenerateStone() + " - " + actualNbrPersons() + "/"
-				+ getNbrPersons();
-	}
 
 }

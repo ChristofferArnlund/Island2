@@ -25,9 +25,14 @@ public abstract class Building {
 		return getName();
 	}
 
-	public abstract String costToString();
-
-	public abstract String genString();
+	public String costToString(){
+		return getGoldCost() + " " + getWoodCost() + " " + getStoneCost();
+	}
+	
+	public String genString() {
+		return getGenerateGold() + " " + getGenerateWood() + " " + getGenerateStone() + " - " + actualNbrPersons() + "/"
+				+ getNbrPersons();
+	}
 
 	public int getBuildingTime() {
 		return buildingTime;

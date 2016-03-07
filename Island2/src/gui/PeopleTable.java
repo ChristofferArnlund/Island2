@@ -1,11 +1,9 @@
 package gui;
 
-import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import game.BuildingManager;
 import game.Person;
 import game.PersonHandler;
 

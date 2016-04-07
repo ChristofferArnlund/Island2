@@ -20,7 +20,6 @@ public class PersonGeneratorTest {
 	private BuildingManager buildingManager;
 	private ResourceManager resourceManager;
 	private PersonHandler ph;
-	private TurnHandler turnHandler;
 	private PersonGenerator pg;
 
 	@Before
@@ -29,8 +28,6 @@ public class PersonGeneratorTest {
 		buildingManager = new BuildingManager(resourceManager);
 		ph = new PersonHandler();
 		pg = new PersonGenerator(buildingManager, ph);
-		UpdateResources updateResources = new UpdateResources();
-		turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources);
 		}
 
 	@After
@@ -41,7 +38,7 @@ public class PersonGeneratorTest {
 	public void newPersonIfCheckOk() {
 		buildingManager.existingBuildings.add(new House());
 		
-		turnHandler.newTurn();
+		pg.nextTurn();
 		assertEquals("did not create new Unassigned",1,ph.getUnassignedList().size());
 	}
 	
@@ -51,18 +48,17 @@ public class PersonGeneratorTest {
 		buildingManager.existingBuildings.add(new House());
 		buildingManager.existingBuildings.add(new House());
 		
-		turnHandler.newTurn();
+		pg.nextTurn();
 		assertEquals("did not create new Unassigned",1,ph.getUnassignedList().size());
 		
 
-		turnHandler.newTurn();
+		pg.nextTurn();
 		assertEquals("did not create new Unassigned",2,ph.getUnassignedList().size());
 		
 
-		turnHandler.newTurn();
+		pg.nextTurn();
 		assertEquals("did not create new Unassigned",3,ph.getUnassignedList().size());
-		
-		turnHandler.newTurn();
+		pg.nextTurn();
 		assertEquals("did not create new Unassigned",3,ph.getUnassignedList().size());
 		
 		ph.assign(ph.getUnassigned(0),buildingManager.existingBuildings.get(0) );

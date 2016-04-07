@@ -12,6 +12,7 @@ public class ResourceManager {
 		resources.put("Gold", 0);
 		resources.put("Wood", 0);
 		resources.put("Stone", 0);
+		resources.put("TechPoints", 0);
 		resources.put("Food", 0);
 		//resources.put("Research", 0);
 

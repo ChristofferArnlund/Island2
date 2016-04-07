@@ -9,6 +9,7 @@ public abstract class Building {
 	private int goldCost;
 	private int woodCost;
 	private int stoneCost;
+	private int techPoints;
 	private int buildingTime;
 	private int generateGold;
 	private int generateWood;
@@ -135,6 +136,14 @@ public abstract class Building {
 
 	public void unassign(Person assigned) {
 		personList.remove(assigned);
+	}
+
+	public int getTechPoints() {
+		return techPoints;
+	}
+
+	public void setGenerateTechPoints(int techPoints) {
+		this.techPoints = techPoints;
 	}
 
 }

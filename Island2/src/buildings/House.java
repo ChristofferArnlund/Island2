@@ -13,6 +13,7 @@ public class House extends Building {
 		setGenerateGold(1);
 		setGenerateWood(1);
 		setGenerateStone(1);
+		setGenerateTechPoints(1);
 		setNbrPersons(1);
 		setMaxNbrPersons(10);
 	}

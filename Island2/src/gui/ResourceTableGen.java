@@ -52,7 +52,7 @@ public class ResourceTableGen {
 		columnNames = new Object[] { "Resource", "Value" };
 	}
 
-	public DefaultTableModel generateTable() {
+	public DefaultTableModel generateModel() {
 		loadResources();
 		return new DefaultTableModel(rowData, columnNames);
 

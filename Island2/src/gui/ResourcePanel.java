@@ -36,7 +36,7 @@ public class ResourcePanel extends JPanel{
 		
 		// RESOURCE TABLE
 
-		resourcesTable = new JTable(new ResourceTableGen(resourceManager,updateResources).generateTable());
+		resourcesTable = new JTable(new ResourceTableGen(resourceManager,updateResources).generateModel());
 		bottomResourcePanel.setViewportView(resourcesTable);
 		resourcesTable.setPreferredScrollableViewportSize(resourcesTable.getPreferredSize());
 		resourcesTable.setFillsViewportHeight(true);
@@ -49,7 +49,7 @@ public class ResourcePanel extends JPanel{
 	}
 	public void update(){
 		
-		resourcesTable.setModel(new ResourceTableGen(resourceManager,updateResources).generateTable());
+		resourcesTable.setModel(new ResourceTableGen(resourceManager,updateResources).generateModel());
 
 	}
 }

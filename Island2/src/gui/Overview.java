@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import Technologies.TechnologyHandler;
 import buildings.House;
 import game.BuildingManager;
 import game.Person;
@@ -41,8 +42,9 @@ public class Overview {
 					PersonHandler personHandler = new PersonHandler();
 					PersonGenerator pg = new PersonGenerator(buildingManager, personHandler);
 					UpdateResources updateResources = new UpdateResources();
-					TurnHandler turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources);					
-					Overview window = new Overview(resourceManager, buildingManager, turnHandler,personHandler,updateResources);
+					TechnologyHandler th= new TechnologyHandler();
+					TurnHandler turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources,th);					
+					Overview window = new Overview(resourceManager, buildingManager, turnHandler,personHandler,updateResources,th);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,6 +62,7 @@ public class Overview {
 	private ExistingBuildingPanel existingBuildingPanel;
 	private PeoplePanel peoplePanel;
 	private TurnPanel turnPanel;
+	private techPanel techPanel;
 
 	/**
 	 * Create the application.
@@ -67,10 +70,11 @@ public class Overview {
 	 * @param resourceManager
 	 * @param personHandler 
 	 * @param updateResources 
+	 * @param th 
 	 */
-	public Overview(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler, PersonHandler personHandler, UpdateResources updateResources) {
+	public Overview(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler, PersonHandler personHandler, UpdateResources updateResources, TechnologyHandler th) {
 
-		initialize(resourceManager, buildingManager, turnHandler,personHandler,updateResources);
+		initialize(resourceManager, buildingManager, turnHandler,personHandler,updateResources,th);
 	}
 
 	/**
@@ -79,8 +83,9 @@ public class Overview {
 	 * @param turnHandler
 	 * @param personHandler 
 	 * @param updateResources 
+	 * @param th 
 	 */
-	private void initialize(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler, PersonHandler personHandler, UpdateResources updateResources) {
+	private void initialize(ResourceManager resourceManager, BuildingManager buildingManager, TurnHandler turnHandler, PersonHandler personHandler, UpdateResources updateResources, TechnologyHandler th) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1280, 720);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,7 +147,7 @@ public class Overview {
 		
 
 
-		JScrollPane techPanel = new JScrollPane();
+		techPanel = new techPanel(th);
 		springLayout.putConstraint(SpringLayout.NORTH, techPanel, 6, SpringLayout.SOUTH, buildingListPanel);
 		springLayout.putConstraint(SpringLayout.WEST, techPanel, 6, SpringLayout.EAST, peoplePanel);
 		springLayout.putConstraint(SpringLayout.SOUTH, techPanel, 306, SpringLayout.SOUTH, buildingListPanel);
@@ -156,15 +161,7 @@ public class Overview {
 		springLayout.putConstraint(SpringLayout.SOUTH, existingTechPanel, 306, SpringLayout.SOUTH, buildingQueuePanel);
 
 
-		
-
-		JLabel techLabel = new JLabel("Technologies");
-		springLayout.putConstraint(SpringLayout.EAST, existingTechPanel, 206, SpringLayout.EAST, techPanel);
-		techLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		techLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
-		techPanel.setColumnHeaderView(techLabel);
 		frame.getContentPane().add(existingTechPanel);
-
 		JLabel existingTechLabel = new JLabel("Existing Technologies");
 		existingTechLabel.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 12));
 		existingTechLabel.setHorizontalAlignment(SwingConstants.CENTER);

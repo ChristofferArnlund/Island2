@@ -24,16 +24,16 @@ public class PeopleTableTest {
 	private PersonHandler ph;
 	private ResourceManager resourceManager;
 	private BuildingManager buildingManager;
-	private TurnHandler turnHandler;
+	private PersonGenerator pg;
+	private UpdateResources updateResources;
 
 	@Before
 	public void setUp() throws Exception {
 		resourceManager = new ResourceManager();
 		buildingManager = new BuildingManager(resourceManager);
 		ph = new PersonHandler();
-		PersonGenerator pg = new PersonGenerator(buildingManager, ph);
-		UpdateResources updateResources = new UpdateResources();
-		turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources);
+		pg = new PersonGenerator(buildingManager, ph);
+		updateResources = new UpdateResources();
 	}
 
 	@After
@@ -72,17 +72,20 @@ public class PeopleTableTest {
 
 		buildingManager.existingBuildings.add(house3);
 
-		turnHandler.newTurn();
-
+//		turnHandler.newTurn();
+		pg.nextTurn();
 		JTable j = new JTable(new PeopleTable(ph).generateTable());
 		assertEquals("did not input", 1, j.getRowCount());
-		turnHandler.newTurn();
-
+//		turnHandler.newTurn();
+		pg.nextTurn();
+		
 		assertEquals("did not input", 2, ph.getUnassignedList().size());
 		j.setModel(new PeopleTable(ph).generateTable());
 		assertEquals("did not input", 2, j.getRowCount());
-		turnHandler.newTurn();
-		turnHandler.newTurn();
+//		turnHandler.newTurn();
+//		turnHandler.newTurn();
+		pg.nextTurn();
+		pg.nextTurn();
 		
 		j.setModel(new PeopleTable(ph).generateTable());
 		assertEquals("did not input", 4, j.getRowCount());

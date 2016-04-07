@@ -22,10 +22,10 @@ public class PersonTest {
 	private Person person;
 	private ResourceManager rm;
 	private BuildingManager bm;
-	private TurnHandler turnHandler;
 	private PersonHandler ph;
 	private RandomNameGenerator rand;
 	private PersonGenerator pg;
+	private UpdateResources updateResources;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -35,8 +35,7 @@ public class PersonTest {
 		bm = new BuildingManager(rm);
 		person = new Person("Pelle");
 		pg = new PersonGenerator(bm, ph);
-		UpdateResources updateResources = new UpdateResources();
-		turnHandler = new TurnHandler(bm, rm, pg, updateResources);
+		updateResources = new UpdateResources();
 	}
 
 	@After
@@ -44,7 +43,6 @@ public class PersonTest {
 		rm=null;
 		bm= null;
 		person= null;
-		turnHandler = null;
 		ph=null;
 	}
 
@@ -78,7 +76,11 @@ public class PersonTest {
 	public void ifPersonNotInHouseDontProduceResources() {
 		bm.existingBuildings.add(new House());
 		Building h = (Building) bm.existingBuildings.get(0);
-		turnHandler.newTurn();
+	
+		pg.nextTurn();
+		updateResources.nextTurn(bm, rm);
+		
+		
 		assertEquals("did not produce",0, rm.resources.get("Gold").intValue());
 	}
 	
@@ -89,7 +91,10 @@ public class PersonTest {
 		ph.addUnassigned(person);
 		ph.assign(ph.getUnassigned(0), house);
 		
-		turnHandler.newTurn();
+//		turnHandler.newTurn();
+		pg.nextTurn();
+		updateResources.nextTurn(bm, rm);
+		
 		assertEquals("did not produce",1, rm.resources.get("Gold").intValue());
 	}
 	@Test
@@ -102,7 +107,11 @@ public class PersonTest {
 		h.assignPerson(person);
 		h.assignPerson(person);
 		
-		turnHandler.newTurn();
+//		turnHandler.newTurn();
+		pg.nextTurn();
+		updateResources.nextTurn(bm, rm);
+		
+		
 		//sqrt(5/1)*1 = 2.2 ~2 
 		assertEquals("did not produce",2, rm.resources.get("Gold").intValue());
 	}

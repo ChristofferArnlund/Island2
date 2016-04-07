@@ -21,67 +21,74 @@ public class BuildingManagerTest {
 
 	private ResourceManager resourceManager;
 	private BuildingManager buildingManager;
-	private TurnHandler turnHandler;
 	private RandomNameGenerator rand;
+	private UpdateResources updateResources;
 
 	@Before
 	public void setUp() throws Exception {
 		resourceManager = new ResourceManager();
 		buildingManager = new BuildingManager(resourceManager);
 		PersonGenerator pg = new PersonGenerator(buildingManager, new PersonHandler());
-		UpdateResources updateResources = new UpdateResources();
-		turnHandler = new TurnHandler(buildingManager, resourceManager, pg, updateResources);
+		updateResources = new UpdateResources();
 		rand = new RandomNameGenerator();
-		
+
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		resourceManager = null;
 		buildingManager = null;
-		turnHandler = null;
 	}
 
 	@Test
 	public void inputHouseInBuildingManagerQueue() {
-		
 		buildingManager.addToQueue(new House());
-		turnHandler.newTurn();
-		
-		assertEquals("Building was not put in Queue","House",buildingManager.buildingQueue.get(0).getName());
-		assertTrue("Building was build",buildingManager.existingBuildings.isEmpty());
-		turnHandler.newTurn();
-		assertEquals("Building was not put in Queue","House",buildingManager.existingBuildings.get(0).getName());
-		assertTrue("Building was build",buildingManager.buildingQueue.isEmpty());
-		
-		
-		
+
+		buildingManager.newTurn();
+
+		assertEquals("Building was not put in Queue", "House", buildingManager.buildingQueue.get(0).getName());
+		assertTrue("Building was build", buildingManager.existingBuildings.isEmpty());
+
+		buildingManager.newTurn();
+
+		assertEquals("Building was not put in Queue", "House", buildingManager.existingBuildings.get(0).getName());
+		assertTrue("Building was build", buildingManager.buildingQueue.isEmpty());
+
 	}
+
 	@Test
-	public void noInputIfNotEnoughResources(){
-		Building h =new House();
-		//Sets resources of gold to zero
+	public void noInputIfNotEnoughResources() {
+		Building h = new House();
+		// Sets resources of gold to zero
 		resourceManager.resources.put("Gold", 0);
-		//Sets price of house to 10 gold
+		// Sets price of house to 10 gold
 		h.setGoldCost(10);
-		assertFalse("Did input House altough not enough resources",buildingManager.addToQueue(h));
+		assertFalse("Did input House altough not enough resources", buildingManager.addToQueue(h));
 	}
+
 	@Test
-	public void checkUpdateResources(){
+	public void checkUpdateResources() {
 		House h = new House();
 		h.assignPerson(new Person(rand.generateRandomName()));
 		buildingManager.addToQueue(h);
-		//two turns to build.
-		turnHandler.newTurn();
-		turnHandler.newTurn();
-		
-		//new turn to update resources.
-		turnHandler.newTurn();
-		assertEquals("Did not update Resource Gold",1,resourceManager.resources.get("Gold").intValue());
-		
+		// two turns to build.
+		updateResources.nextTurn(buildingManager, resourceManager);
+
+		buildingManager.newTurn();
+		updateResources.nextTurn(buildingManager, resourceManager);
+
+		buildingManager.newTurn();
+
+		// new turn to update resources.
+		updateResources.nextTurn(buildingManager, resourceManager);
+
+		buildingManager.newTurn();
+		assertEquals("Did not update Resource Gold", 1, resourceManager.resources.get("Gold").intValue());
+
 	}
+
 	@Test
-	public void checkMultipleUpdateResources(){
+	public void checkMultipleUpdateResources() {
 		House h1 = new House();
 		House h2 = new House();
 		House h3 = new House();
@@ -91,13 +98,19 @@ public class BuildingManagerTest {
 		buildingManager.addToQueue(h1);
 		buildingManager.addToQueue(h2);
 		buildingManager.addToQueue(h3);
-		//two turns to build.
-		turnHandler.newTurn();
-		turnHandler.newTurn();
-		//new turn to update resources.
-		turnHandler.newTurn();
-		assertEquals("Did not update Resource Gold",3,resourceManager.resources.get("Gold").intValue());
-		
+		// two turns to build.
+
+		updateResources.nextTurn(buildingManager, resourceManager);
+		buildingManager.newTurn();
+		updateResources.nextTurn(buildingManager, resourceManager);
+
+		buildingManager.newTurn();
+		// new turn to update resources.
+		updateResources.nextTurn(buildingManager, resourceManager);
+
+		buildingManager.newTurn();
+		assertEquals("Did not update Resource Gold", 3, resourceManager.resources.get("Gold").intValue());
+
 	}
 
 }
